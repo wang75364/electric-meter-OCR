@@ -1,0 +1,26 @@
+<annotation>
+	<folder>JPEGImages</folder>
+	<filename>005.jpg</filename>
+	<path>C:\UserProgram\python_test\IOT_API\VOCdevkit\VOC2021\JPEGImages\005.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>810</width>
+		<height>1080</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>show</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>140</xmin>
+			<ymin>420</ymin>
+			<xmax>503</xmax>
+			<ymax>531</ymax>
+		</bndbox>
+	</object>
+</annotation>

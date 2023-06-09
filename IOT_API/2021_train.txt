@@ -1,0 +1,8 @@
+C:\UserProgram\python_test\IOT_API/VOCdevkit/VOC2021/JPEGImages/003.jpg
+C:\UserProgram\python_test\IOT_API/VOCdevkit/VOC2021/JPEGImages/004.jpg
+C:\UserProgram\python_test\IOT_API/VOCdevkit/VOC2021/JPEGImages/001.jpg
+C:\UserProgram\python_test\IOT_API/VOCdevkit/VOC2021/JPEGImages/005.jpg
+C:\UserProgram\python_test\IOT_API/VOCdevkit/VOC2021/JPEGImages/002.jpg
+C:\UserProgram\python_test\IOT_API/VOCdevkit/VOC2021/JPEGImages/006.jpg
+C:\UserProgram\python_test\IOT_API/VOCdevkit/VOC2021/JPEGImages/004.jpg
+C:\UserProgram\python_test\IOT_API/VOCdevkit/VOC2021/JPEGImages/003.jpg

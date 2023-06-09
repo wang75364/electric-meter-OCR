@@ -1,0 +1,3 @@
+C:\UserProgram\python_test\IOT_API/VOCdevkit/VOC2021/JPEGImages/002.jpg
+C:\UserProgram\python_test\IOT_API/VOCdevkit/VOC2021/JPEGImages/001.jpg
+C:\UserProgram\python_test\IOT_API/VOCdevkit/VOC2021/JPEGImages/007.jpg
