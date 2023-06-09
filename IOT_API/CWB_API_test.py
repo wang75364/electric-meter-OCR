@@ -81,7 +81,7 @@ if __name__ == '__main__':
     #API 網址
     url = 'https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-D0047-093?Authorization=CWB-3C9AC77F-E9B0-466D-A0B8-0065FDFBC8EE&locationId=F-D0047-025'
     #LINE token
-    token = 'qey0fmUdlbaOXiwFTttS4YXCc1GJdwMsUZUuXuAUJNk'
+    token = 'line token'
 
     print('※ 開始執行YOLOV4物件偵測...')
     model = initNet()
