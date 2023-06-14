@@ -78,71 +78,72 @@ def lineNotify(token, msg):
     return r.status_code
 
 if __name__ == '__main__':
-    #API 網址
-    url = 'https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-D0047-093?Authorization=CWB-3C9AC77F-E9B0-466D-A0B8-0065FDFBC8EE&locationId=F-D0047-025'
+    camera_open = False
+
     #LINE token
-    token = 'line token'
+    token = 'qey0fmUdlbaOXiwFTttS4YXCc1GJdwMsUZUuXuAUJNk'
 
     print('※ 開始執行YOLOV4物件偵測...')
     model = initNet()
-    #圖片路徑
-    image_path = r'C:\UserProgram\python_test\IOT_API\VOCdevkit\VOC2021\JPEGImages\007.jpg'
-    img = cv2.imread(image_path)
-    classes, confs, boxes = nnProcess(img, model)
-    box_img=read_class(img,classes,confs,boxes,1)
-    img=cut_img(img,classes,confs,boxes)
+    if camera_open:
+        cap = cv2.VideoCapture(0)
+    while(True):
+        if camera_open:
+            ret , img =cap.read()
+        else:
+            image_path = r'VOCdevkit\VOC2021\JPEGImages\007.jpg'
+            img = cv2.imread(image_path)
+        classes, confs, boxes = nnProcess(img, model)
+        if len(boxes) == 0:
+            continue
+        box_img=read_class(img,classes,confs,boxes,1)
+        img=cut_img(img,classes,confs,boxes)
+        img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
+        # clahe = cv2.createCLAHE()
+        # img_gray = clahe.apply(img_gray)
+        kernel = np.ones((3,3),np.uint8)
+        # dilate = cv2.dilate(img_gray,kernel,iterations=1)
+        erode = cv2.erode(img_gray,kernel,iterations=1)
 
-    img = cv2.resize(img,[2560,1280])
-    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
-    clahe = cv2.createCLAHE()
-    img_gray = clahe.apply(img_gray)
-    kernel = np.ones((5,5),np.uint8)
-    dilate = cv2.dilate(img_gray,kernel,iterations=2)
-    erode = cv2.erode(dilate,kernel,iterations=1)
+        ret, thresh = cv2.threshold(erode, 100, 255, cv2.THRESH_BINARY_INV)
+        count ,_ = cv2.findContours(thresh,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+        copy_img = img.copy()
+        for cnt in count:
+            if len(cnt) > 0:
+                # print(len(cnt))
+                if cv2.contourArea(cnt) < 5000:
+                    continue
+                # print(cv2.contourArea(cnt))
+                x,y,w,h = cv2.boundingRect(cnt)
+                cv2.rectangle(copy_img,(x,y),(x+w,y+h),(0,255,0),5)
+                crop_img = img[y:y+h,x:x+w]
+                # cv2.imshow('main3',crop_img)
+                # convert to grayscale
+                level_img = cv2.cvtColor(crop_img, cv2.COLOR_BGR2GRAY)
+                level_img, img_bin = cv2.threshold(level_img, 150, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+                level_img = cv2.bitwise_not(img_bin)
+                kernel = np.ones((3, 3), np.uint8)
 
-    ret, thresh = cv2.threshold(erode, 200, 255, cv2.THRESH_BINARY_INV)
-    count ,_ = cv2.findContours(thresh,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
-    copy_img = img.copy()
-    for cnt in count:
-        if len(cnt) > 0:
-            # print(len(cnt))
-            # print(cv2.contourArea(cnt))
-            if cv2.contourArea(cnt) < 500000:
-                continue
-            x,y,w,h = cv2.boundingRect(cnt)
-            # print(x,y,w,h)
-            cv2.rectangle(copy_img,(x,y),(x+w,y+h),(0,255,0),5)
-            # x,y,w,h = cv2.boundingRect(cnt)
-            crop_img = thresh[y+100:y+h-100,x+100:x+w-100]
-    crop_img = cv2.resize(crop_img,[400,200])
-    config = r'-c tessedit_char_whitelist=0123456789 --psm 6'
-    ocr_rst=pytesseract.image_to_string(crop_img,  config=config,lang="eng")
-    # print(ocr_rst)
-    with open('output.csv','a+') as f:
-        f.write(ocr_rst)
-        f.write(',')
-    data = requests.get(url)   # 取得 JSON 檔案的內容為文字
-    data_json = data.json()    # 轉換成 JSON 格式
-    location = data_json['records']['locations'][0]['location']
-    for i in location:
-        city = i['locationName']    # 縣市名稱
-        if "虎尾" in city:
-            PoP12h = i['weatherElement'][0]['time'][0]['elementValue'][0]['value']    # 12小時降雨機率
-            Wx = i['weatherElement'][1]['time'][0]['elementValue'][0]['value']        # 天氣現象
-            AT = i['weatherElement'][2]['time'][0]['elementValue'][0]['value']    # 體感溫度
-            T = i['weatherElement'][3]['time'][0]['elementValue'][0]['value']    # 溫度
-            RH = i['weatherElement'][4]['time'][0]['elementValue'][0]['value']    # 相對濕度
-            CI = i['weatherElement'][5]['time'][0]['elementValue'][0]['value']    # 舒適度指數
-            CI_str = i['weatherElement'][5]['time'][0]['elementValue'][1]['value']    # 舒適度指數
-            WeatherDescription = i['weatherElement'][6]['time'][0]['elementValue'][0]['value']    # 天氣預報綜合描述
-            PoP6h = i['weatherElement'][7]['time'][0]['elementValue'][0]['value']    # 6小時降雨機率
-            WS = i['weatherElement'][8]['time'][0]['elementValue'][0]['value']    # 風速
-            WD = i['weatherElement'][9]['time'][0]['elementValue'][0]['value']    # 風向
-            Td = i['weatherElement'][10]['time'][0]['elementValue'][0]['value']    # 露點溫度
-            print(f'{city}\n12小時降雨機率:{PoP12h}%\n天氣現象: {Wx}\n體感溫度:{AT} ℃\n溫度:{T}℃\n相對濕度:{RH}%\n舒適度指數:{CI}NA {CI_str}\n天氣預報綜合描述:{WeatherDescription}\n6小時降雨機率:{PoP6h}%\n')
-    
-    lineTool.lineNotify(token,WeatherDescription)
-    lineTool.lineNotify(token,'OCR:'+ocr_rst)
-    cv2.imshow('main2',crop_img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+                # make the image bigger, because it needs at least 30 pixels for the height for the characters
+                level_img = cv2.resize(level_img,(0,0),fx=4,fy=4, interpolation=cv2.INTER_CUBIC)
+                level_img = cv2.dilate(level_img, kernel, iterations=1)
+
+                # --debug--
+                cv2.imshow("Debug", level_img)
+                config = r'-c tessedit_char_whitelist=0123456789 --psm 8 --oem 3'
+                level = pytesseract.image_to_string(level_img, config=config)
+                print(level)
+        with open('output.csv','a+') as f:
+            f.write(level.replace('\n',''))
+            f.write(',')
+        lineTool.lineNotify(token,'OCR:'+level)
+        cv2.imshow('main',img)
+        # cv2.imshow('main2',thresh)
+        # cv2.imshow('main4',copy_img)
+        
+        if camera_open == False:
+            cv2.waitKey(0)
+            break
+        else:
+            cv2.waitKey(10)
+cv2.destroyAllWindows()
