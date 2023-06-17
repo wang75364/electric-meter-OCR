@@ -1,0 +1,14 @@
+<!doctype html>
+<html>
+<head>
+  <title>Flask</title>
+</head>
+<body>
+  <h3>Camera Live Streaming</h3>
+  <img src="{{ url_for('video_feed') }}">
+  <form method="post" action="/test">
+	<input type="submit" value="讀取Aruco" name="action">
+	<input type="submit" value="讀取OCR" name="action">
+  <form>
+</body>
+</html>
